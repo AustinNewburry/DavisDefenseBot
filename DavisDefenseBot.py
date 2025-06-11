@@ -19,5 +19,3 @@ async def ping(ctx):
     await ctx.reply("Pong!")
 
 bot.run(TOKEN)git --version
-$ ^V^V^Vvvvv^V^V
-
