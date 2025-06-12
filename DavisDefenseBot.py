@@ -123,6 +123,9 @@ async def salute(ctx, member: discord.Member):
     user_xp[member_id] += xp_to_give
     save_xp(user_xp)
 
+    # Check for a role update after granting XP
+    await check_and_update_roles(member)
+
     await ctx.send(f"o7 {ctx.author.mention} salutes {member.mention}! They have gained {xp_to_give} XP.")
 
     # Update the cooldown
