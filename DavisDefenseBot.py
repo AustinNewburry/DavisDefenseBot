@@ -7,6 +7,8 @@ import datetime
 load_dotenv()  # loads DISCORD_BOT_TOKEN from .env
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
+OWNER_ID = 819414821182242848
+
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
