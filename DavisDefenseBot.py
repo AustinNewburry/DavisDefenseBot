@@ -11,6 +11,30 @@ TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 OWNER_ID = 819414821182242848
 
+# --- Role & XP Structure ---
+# The bot will grant roles based on this list.
+# The XP is the *minimum* required for that role.
+# It's ordered from lowest to highest rank.
+RANK_ROLES = [
+    {"name": "Private", "xp": 0},
+    {"name": "Private First Class", "xp": 150},
+    {"name": "Corporal", "xp": 600},
+    {"name": "Sergeant", "xp": 1350},
+    {"name": "Staff Sergeant", "xp": 2400},
+    {"name": "Master Sergeant", "xp": 3750},
+    {"name": "Sergeant Major", "xp": 5400},
+    {"name": "Lieutenant", "xp": 7350},
+    {"name": "Captain", "xp": 9600},
+    {"name": "Major", "xp": 12150},
+    {"name": "Colonel", "xp": 15000},
+    {"name": "Brigadier General", "xp": 18150},
+    {"name": "General", "xp": 21600},
+    {"name": "General of the Army", "xp": 25350}
+]
+# Create a set of just the role names for easier checking
+RANK_ROLE_NAMES = {role["name"] for role in RANK_ROLES}
+
+
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
