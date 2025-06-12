@@ -4,7 +4,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 import datetime
 
-load_dotenv()  # loads DISCORD_BOT_TOKEN from .env
+load_dotenv()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 OWNER_ID = 819414821182242848
