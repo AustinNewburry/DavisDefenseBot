@@ -27,7 +27,8 @@ async def ping(ctx):
 @bot.command()
 async def salute(ctx, member: discord.Member):
     """Salute another user to give them XP."""
-    author_id = ctx.author.id
+    author_id = str(ctx.author.id)
+    member_id = str(member.id)
     current_time = datetime.datetime.now()
 
     # Check for cooldown
