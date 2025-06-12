@@ -3,6 +3,8 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 import datetime
+import json
+import random
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
