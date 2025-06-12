@@ -116,6 +116,9 @@ async def addxp(ctx, member: discord.Member, amount: int):
         user_xp[member_id] = 0
     user_xp[member_id] += amount
     save_xp(user_xp)
+
+    await check_and_update_roles(member)  # Check for role update
+
     await ctx.reply(f"Added {amount} XP to {member.mention}. They now have {user_xp[member_id]} XP.")
 
 @bot.command()
