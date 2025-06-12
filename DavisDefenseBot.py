@@ -11,7 +11,7 @@ intents = discord.Intents.default()
 intents.members = True # Required to get member information
 intents.message_content = True
 
-bot = commands.Bot(command_prefix=">", intents=intents) # Changed prefix to >
+bot = commands.Bot(command_prefix=">", intents=intents)
 
 # In-memory storage for salute cooldowns
 salute_cooldowns = {}
