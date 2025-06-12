@@ -102,6 +102,9 @@ async def setxp(ctx, member: discord.Member, amount: int):
     member_id = str(member.id)
     user_xp[member_id] = amount
     save_xp(user_xp)
+
+    await check_and_update_roles(member)  # Check for role update
+
     await ctx.reply(f"Set {member.mention}'s XP to {amount}.")
 
 @bot.command()
