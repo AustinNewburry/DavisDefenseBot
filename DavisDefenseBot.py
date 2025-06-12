@@ -13,7 +13,7 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix=">", intents=intents) # Changed prefix to >
 
-# In-memory storage for salute cooldowns. For a real bot, you'd want a database.
+# In-memory storage for salute cooldowns
 salute_cooldowns = {}
 
 # XP System
