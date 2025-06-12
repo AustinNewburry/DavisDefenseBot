@@ -109,6 +109,11 @@ async def salute(ctx, member: discord.Member):
     member_id = str(member.id)
     current_time = datetime.datetime.now()
 
+    # Prevent users from saluting themselves
+    if ctx.author == member:
+        await ctx.reply("You cannot salute yourself.")
+        return
+
     # Check for cooldown
     if author_id in salute_cooldowns:
         last_salute_time = salute_cooldowns[author_id]
