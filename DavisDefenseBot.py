@@ -16,6 +16,22 @@ bot = commands.Bot(command_prefix=">", intents=intents) # Changed prefix to >
 # In-memory storage for salute cooldowns. For a real bot, you'd want a database.
 salute_cooldowns = {}
 
+# XP System
+XP_FILE = "xp.json"
+
+def load_xp():
+    # Check if the file exists and is not empty
+    if os.path.exists(XP_FILE) and os.path.getsize(XP_FILE) > 0:
+        with open(XP_FILE, "r") as f:
+            return json.load(f)
+    return {} # Return an empty dictionary if the file is empty or doesn't exist
+
+def save_xp(user_xp):
+    with open(XP_FILE, "w") as f:
+        json.dump(user_xp, f, indent=4)
+
+user_xp = load_xp()
+
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
