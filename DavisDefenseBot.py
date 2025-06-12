@@ -36,6 +36,40 @@ def save_xp(user_xp):
 
 user_xp = load_xp()
 
+async def check_and_update_roles(member: discord.Member):
+    """Checks a user's XP and updates their rank role accordingly."""
+    user_id = str(member.id)
+    current_xp = user_xp.get(user_id, 0)
+
+    # Determine the highest role the user has earned
+    target_role_name = None
+    for rank in reversed(RANK_ROLES): # Iterate from highest to lowest
+        if current_xp >= rank["xp"]:
+            target_role_name = rank["name"]
+            break
+
+    if not target_role_name:
+        return # No roles to assign if they don't meet the minimum for the lowest rank
+
+    # Get the role object from the server
+    target_role = discord.utils.get(member.guild.roles, name=target_role_name)
+    if not target_role:
+        print(f"Warning: Role '{target_role_name}' not found on the server.")
+        return
+
+    # Remove any other rank roles the user might have
+    roles_to_remove = []
+    for user_role in member.roles:
+        if user_role.name in RANK_ROLE_NAMES and user_role.name != target_role_name:
+            roles_to_remove.append(user_role)
+
+    if roles_to_remove:
+        await member.remove_roles(*roles_to_remove, reason="Rank update")
+
+    # Add the new role if they don't already have it
+    if target_role not in member.roles:
+        await member.add_roles(target_role, reason="Rank promotion")
+
 @bot.event
 async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
