@@ -37,9 +37,14 @@ async def salute(ctx, member: discord.Member):
             await ctx.reply("You can only salute once every 5 minutes.")
             return
 
-    # Grant XP (for now, we'll just send a message)
-    # In the future, you could replace this with a real XP system.
-    await ctx.send(f"{ctx.author.mention} salutes {member.mention}! They have gained 10 XP.")
+    # Grant XP
+    xp_to_give = random.randint(5, 15)
+    if member_id not in user_xp:
+        user_xp[member_id] = 0
+    user_xp[member_id] += xp_to_give
+    save_xp(user_xp)
+
+    await ctx.send(f"o7 {ctx.author.mention} salutes {member.mention}! They have gained {xp_to_give} XP.")
 
     # Update the cooldown
     salute_cooldowns[author_id] = current_time
