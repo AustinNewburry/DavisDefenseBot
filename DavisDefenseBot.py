@@ -118,6 +118,27 @@ async def addxp(ctx, member: discord.Member, amount: int):
     save_xp(user_xp)
     await ctx.reply(f"Added {amount} XP to {member.mention}. They now have {user_xp[member_id]} XP.")
 
+@bot.command()
+async def xp(ctx, member: discord.Member = None):
+    """Check your or another user's XP."""
+    if member is None:
+        member = ctx.author
+
+    member_id = str(member.id)
+    xp_amount = user_xp.get(member_id, 0)
+
+    await ctx.reply(f"{member.display_name} has {xp_amount} XP.")
+
+@salute.error
+async def salute_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.reply("Please mention a user to salute. Usage: `>salute @user`")
+    elif isinstance(error, commands.MemberNotFound):
+        await ctx.reply("Could not find that member. Please make sure you've mentioned a valid user.")
+    else:
+        print(f"An error occurred with the salute command: {error}")
+        await ctx.reply("An unexpected error occurred.")
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.NotOwner):
