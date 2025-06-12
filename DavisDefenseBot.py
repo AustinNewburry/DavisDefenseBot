@@ -55,5 +55,49 @@ async def salute_error(ctx, error):
         print(f"An error occurred with the salute command: {error}")
         await ctx.reply("An unexpected error occurred.")
 
+@bot.command()
+async def xp(ctx, member: discord.Member = None):
+    """Check your or another user's XP."""
+    if member is None:
+        member = ctx.author
+
+    member_id = str(member.id)
+    xp_amount = user_xp.get(member_id, 0)
+
+    await ctx.reply(f"{member.display_name} has {xp_amount} XP.")
+
+@bot.command()
+@commands.is_owner()
+async def setxp(ctx, member: discord.Member, amount: int):
+    """(Owner only) Set a user's XP to a specific amount."""
+    if ctx.author.id != OWNER_ID:
+        return
+
+    member_id = str(member.id)
+    user_xp[member_id] = amount
+    save_xp(user_xp)
+    await ctx.reply(f"Set {member.mention}'s XP to {amount}.")
+
+@bot.command()
+@commands.is_owner()
+async def addxp(ctx, member: discord.Member, amount: int):
+    """(Owner only) Add XP to a user."""
+    if ctx.author.id != OWNER_ID:
+        return
+
+    member_id = str(member.id)
+    if member_id not in user_xp:
+        user_xp[member_id] = 0
+    user_xp[member_id] += amount
+    save_xp(user_xp)
+    await ctx.reply(f"Added {amount} XP to {member.mention}. They now have {user_xp[member_id]} XP.")
+
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.NotOwner):
+        await ctx.reply("You do not have permission to use this command.")
+    else:
+        pass
+
 
 bot.run(TOKEN)
