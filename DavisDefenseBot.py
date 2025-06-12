@@ -8,7 +8,7 @@ load_dotenv()  # loads DISCORD_BOT_TOKEN from .env
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 intents = discord.Intents.default()
-intents.members = True # Required to get member information
+intents.members = True
 intents.message_content = True
 
 bot = commands.Bot(command_prefix=">", intents=intents)
