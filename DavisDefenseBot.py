@@ -229,16 +229,6 @@ async def resolve_world_boss(channel: discord.TextChannel):
     boss_event_active = False; boss_participants = set()
 
 # --- Commands ---
-# ... (Toggle commands, Utility commands remain the same) ...
-
-# --- Game Commands ---
-@bot.command()
-async def patrol(ctx):
-    if not game_features_enabled: return
-    # ... (Patrol logic remains the same, using full RANK_ROLES for weight calc) ...
-
-# ... (All other commands remain the same) ...
-
 @bot.command()
 @commands.is_owner()
 async def gameon(ctx):
@@ -294,7 +284,24 @@ async def say(ctx, channel: discord.TextChannel, *, message: str):
 @bot.command()
 @commands.cooldown(1, 300, commands.BucketType.default)
 async def ping(ctx):
-    ping_message = ("> PING: HENRY DAVIS DEFENSE ROBOT [ID: HD-DRX-0923]\n""...""[H.D.D.R]: “I SEE EVERYTHING.”\n""```\n""> END PING RESPONSE\n""> LOG CODE: 7B3F-A119-CX99")
+    ping_message = ("> PING: HENRY DAVIS DEFENSE ROBOT [ID: HD-DRX-0923]\n"
+                    "> SIGNAL STRENGTH: MAX\n"
+                    "> CRYPTO HANDSHAKE: VERIFIED ✅\n"
+                    "> CORE TEMP: 37.6°C | STATUS: STABLE\n"
+                    "> NEURAL INTERFACE: ONLINE\n"
+                    "> TARGETING SYSTEMS: CALIBRATED\n"
+                    "> DEFENSE SUBROUTINES: ARMED\n"
+                    "> MOTION SERVOS: SYNCHRONIZED\n"
+                    "> THREAT ASSESSMENT: STANDBY\n\n"
+                    ">> RESPONSE RECEIVED <<\n\n"
+                    "```diff\n"
+                    "- [H.D.D.R]: SYSTEM ONLINE\n"
+                    "- [H.D.D.R]: DIRECTIVE AWAITING\n"
+                    "- [H.D.D.R]: HOSTILE DETECTION ENABLED\n"
+                    "- [H.D.D.R]: “EMOS WILL BE ANNIHILATED.”\n"
+                    "```\n"
+                    "> END PING RESPONSE\n"
+                    "> LOG CODE: 7B3F-A119-CX99")
     await ctx.reply(ping_message)
 
 @bot.command()
