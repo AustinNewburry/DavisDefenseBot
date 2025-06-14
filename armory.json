@@ -1,0 +1,27 @@
+{
+    "819414821182242848": {
+        "materials": {
+            "Gunpowder": 1,
+            "Duct Tape": 2,
+            "Scrap Metal": 1
+        },
+        "crafted_items": {}
+    },
+    "898508513574285312": {
+        "materials": {
+            "Gunpowder": 3,
+            "Duct Tape": 1
+        },
+        "crafted_items": {}
+    },
+    "718929211297103923": {
+        "materials": {
+            "Duct Tape": 3,
+            "Medical Supplies": 1,
+            "Gunpowder": 1,
+            "Advanced Optics": 1,
+            "High-Grade Steel": 1
+        },
+        "crafted_items": {}
+    }
+}
