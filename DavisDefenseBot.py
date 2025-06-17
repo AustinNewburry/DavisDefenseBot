@@ -11,29 +11,30 @@ load_dotenv()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
 OWNER_ID = 819414821182242848
+DAVIS_ID = 668152832469237770
 
 # --- Bot Configuration ---
-ATTACK_CHANNEL_ID = 0
+ATTACK_CHANNEL_ID = 1383124472193744956
 NOTIFICATION_ROLE_NAME = "HDAAF Notifications"
 ANNOUNCEMENT_CHANNEL_NAME = "hdaaf-announcements"
 EMO_HUNTER_ROLE_NAME = "Emo Hunter"
 
 # --- Game Data Structures ---
 RANK_ROLES = [
-    {"name": "Private", "xp": 0, "weight": 1},
-    {"name": "Private First Class", "xp": 150, "weight": 2},
-    {"name": "Corporal", "xp": 600, "weight": 3},
-    {"name": "Sergeant", "xp": 1350, "weight": 4},
-    {"name": "Staff Sergeant", "xp": 2400, "weight": 5},
-    {"name": "Master Sergeant", "xp": 3750, "weight": 6},
-    {"name": "Sergeant Major", "xp": 5400, "weight": 7},
-    {"name": "Lieutenant", "xp": 7350, "weight": 8},
-    {"name": "Captain", "xp": 9600, "weight": 9},
-    {"name": "Major", "xp": 12150, "weight": 10},
-    {"name": "Colonel", "xp": 15000, "weight": 11},
-    {"name": "Brigadier General", "xp": 18150, "weight": 12},
-    {"name": "General", "xp": 21600, "weight": 13},
-    {"name": "General of the Army", "xp": 25350, "weight": 15}
+    {"name": "Private", "honor": 0, "weight": 1},
+    {"name": "Private First Class", "honor": 150, "weight": 2},
+    {"name": "Corporal", "honor": 600, "weight": 3},
+    {"name": "Sergeant", "honor": 1350, "weight": 4},
+    {"name": "Staff Sergeant", "honor": 2400, "weight": 5},
+    {"name": "Master Sergeant", "honor": 3750, "weight": 6},
+    {"name": "Sergeant Major", "honor": 5400, "weight": 7},
+    {"name": "Lieutenant", "honor": 7350, "weight": 8},
+    {"name": "Captain", "honor": 9600, "weight": 9},
+    {"name": "Major", "honor": 12150, "weight": 10},
+    {"name": "Colonel", "honor": 15000, "weight": 11},
+    {"name": "Brigadier General", "honor": 18150, "weight": 12},
+    {"name": "General", "honor": 21600, "weight": 13},
+    {"name": "General of the Army", "honor": 25350, "weight": 15}
 ]
 ACQUIRABLE_RANK_ROLES = RANK_ROLES[:11]
 RANK_ROLE_NAMES = {role["name"] for role in RANK_ROLES}
@@ -61,57 +62,62 @@ MATERIAL_RARITY_WEIGHTS = {
 RECIPES = {
     "Pipe Bomb": {
         "description": "A simple, yet effective, explosive device.",
-        "materials": {"Scrap Metal": 5, "Gunpowder": 3, "Duct Tape": 1}, "emoji": "💣", "type": "consumable"
+        "materials": {"Scrap Metal": 5, "Gunpowder": 3, "Duct Tape": 1}, "emoji": "�", "type": "consumable",
+        "intelligence_req": 5
     },
     "Medkit": {
         "description": "Restores health in the field.",
-        "materials": {"Medical Supplies": 5, "Duct Tape": 2}, "emoji": "➕", "type": "consumable"
+        "materials": {"Medical Supplies": 5, "Duct Tape": 2}, "emoji": "➕", "type": "consumable", "intelligence_req": 10
     },
     "Pistol": {
         "description": "Standard issue sidearm. Adds +2 power.",
-        "materials": {"Scrap Metal": 10, "High-Grade Steel": 2}, "emoji": "🔫", "type": "weapon", "weight_bonus": 2
+        "materials": {"Scrap Metal": 10, "High-Grade Steel": 2}, "emoji": "1️⃣", "type": "weapon", "weight_bonus": 2,
+        "intelligence_req": 15
     },
     "Shotgun": {
         "description": "Devastating at close range. Adds +4 power.",
-        "materials": {"Scrap Metal": 15, "High-Grade Steel": 5, "Gunpowder": 5}, "emoji": "💥", "type": "weapon",
-        "weight_bonus": 4
+        "materials": {"Scrap Metal": 15, "High-Grade Steel": 5, "Gunpowder": 5}, "emoji": "2️⃣", "type": "weapon",
+        "weight_bonus": 4, "intelligence_req": 20
     },
     "Assault Rifle": {
         "description": "A versatile automatic weapon. Adds +6 power.",
-        "materials": {"High-Grade Steel": 10, "Electronics": 5, "Scrap Metal": 20}, "emoji": "🔫", "type": "weapon",
-        "weight_bonus": 6
+        "materials": {"High-Grade Steel": 10, "Electronics": 5, "Scrap Metal": 20}, "emoji": "3️⃣", "type": "weapon",
+        "weight_bonus": 6, "intelligence_req": 30
     },
     "Sniper Rifle": {
         "description": "For taking out targets from a distance. Adds +8 power.",
-        "materials": {"High-Grade Steel": 15, "Advanced Optics": 2, "Electronics": 3}, "emoji": "🔭", "type": "weapon",
-        "weight_bonus": 8
+        "materials": {"High-Grade Steel": 15, "Advanced Optics": 2, "Electronics": 3}, "emoji": "4️⃣", "type": "weapon",
+        "weight_bonus": 8, "intelligence_req": 40
     },
     "Rocket Launcher": {
         "description": "Delivers a high-explosive payload. Adds +12 power.",
         "materials": {"High-Grade Steel": 25, "Electronics": 10, "Gunpowder": 20, "Military-Grade Composite": 5},
-        "emoji": "🚀", "type": "weapon", "weight_bonus": 12
+        "emoji": "🚀", "type": "weapon", "weight_bonus": 12, "intelligence_req": 50
     },
     "Body Armor": {
         "description": "Reduces incoming damage. (Passive)",
-        "materials": {"High-Grade Steel": 20, "Military-Grade Composite": 10}, "emoji": "🦺", "type": "armor"
+        "materials": {"High-Grade Steel": 20, "Military-Grade Composite": 10}, "emoji": "🦺", "type": "armor",
+        "intelligence_req": 25
     },
     "Nightvision Goggles": {
         "description": "Grants the ability to see in the dark. (Passive)",
-        "materials": {"Electronics": 15, "Advanced Optics": 5, "Duct Tape": 5}, "emoji": "🥽", "type": "gear"
+        "materials": {"Electronics": 15, "Advanced Optics": 5, "Duct Tape": 5}, "emoji": "🥽", "type": "gear",
+        "intelligence_req": 35
     },
     "Suppressor": {
         "description": "Reduces weapon noise. (Passive)",
-        "materials": {"Scrap Metal": 15, "Electronics": 1}, "emoji": "🤫", "type": "gear"
+        "materials": {"Scrap Metal": 15, "Electronics": 1}, "emoji": "🤫", "type": "gear", "intelligence_req": 15
     },
     "Tactical Nuke": {
         "description": "The ultimate weapon. Use with extreme caution.",
         "materials": {"Nuclear Material": 3, "Military-Grade Composite": 20, "Electronics": 30, "High-Grade Steel": 50},
-        "emoji": "☢️", "type": "consumable"
+        "emoji": "☢️", "type": "consumable", "intelligence_req": 90
     },
     "Coast Guard Battleship": {
         "description": "A formidable naval vessel.",
         "materials": {"Nuclear Material": 10, "High-Grade Steel": 200, "Military-Grade Composite": 100,
-                      "Electronics": 150, "Advanced Optics": 50}, "emoji": "🚢", "type": "vehicle"
+                      "Electronics": 150, "Advanced Optics": 50}, "emoji": "🚢", "type": "vehicle",
+        "intelligence_req": 100
     }
 }
 
@@ -125,10 +131,13 @@ bot.remove_command('help')
 # --- Global State & Cooldowns ---
 game_features_enabled = True
 attack_in_progress = False
-defenders = []
+defenders = set()
 patrol_cooldowns = {}
 salute_cooldowns = {}
 scavenge_cooldowns = {}
+train_cooldowns = {}
+davis_salute_event_active = False
+davis_saluters = set()
 boss_event_active = False
 boss_hp = 0
 boss_max_hp = 0
@@ -137,9 +146,10 @@ boss_participants = set()
 boss_event_message = None
 
 # --- Data File Management ---
-XP_FILE = "xp.json"
+HONOR_FILE = "honor.json"
 STATS_FILE = "user_stats.json"
 ARMORY_FILE = "armory.json"
+SKILLS_FILE = "user_skills.json"
 
 
 def load_data(file_path):
@@ -154,12 +164,21 @@ def save_data(data, file_path):
         json.dump(data, f, indent=4)
 
 
-user_xp = load_data(XP_FILE)
+user_honor = load_data(HONOR_FILE)
 user_stats = load_data(STATS_FILE)
 user_armory = load_data(ARMORY_FILE)
+user_skills = load_data(SKILLS_FILE)
 
 
 # --- Helper Functions ---
+def get_user_skills(user_id):
+    user_id = str(user_id)
+    if user_id not in user_skills:
+        user_skills[user_id] = {"strength": 1, "agility": 1, "intelligence": 1, "endurance": 1}
+        save_data(user_skills, SKILLS_FILE)
+    return user_skills[user_id]
+
+
 def create_health_bar(current_hp, max_hp, length=20):
     current_hp = max(0, current_hp)
     percentage = current_hp / max_hp
@@ -175,26 +194,26 @@ async def check_and_update_roles(member: discord.Member):
         if role.name in UNACQUIRABLE_RANK_ROLE_NAMES:
             return
     user_id = str(member.id)
-    current_xp = user_xp.get(user_id, 0)
+    current_honor = user_honor.get(user_id, 0)
     target_role_data = None
     for rank in reversed(ACQUIRABLE_RANK_ROLES):
-        if current_xp >= rank["xp"]:
+        if current_honor >= rank["honor"]:
             target_role_data = rank
             break
     if not target_role_data: return
-    target_role_name = target_role_data["name"]
-    target_role_obj = discord.utils.get(member.guild.roles, name=target_role_name)
-    if not target_role_obj:
-        print(f"Warning: Role '{target_role_name}' not found on server.")
-        return
-    roles_to_remove = []
-    for role in member.roles:
-        if role.name in ACQUIRABLE_RANK_ROLE_NAMES and role.name != target_role_name:
-            roles_to_remove.append(role)
-    if roles_to_remove:
-        await member.remove_roles(*roles_to_remove, reason="Rank promotion cleanup")
-    if target_role_obj not in member.roles:
-        await member.add_roles(target_role_obj, reason="Automatic promotion via XP")
+    target_role_obj = discord.utils.get(member.guild.roles, name=target_role_data["name"])
+    if not target_role_obj: return
+
+    new_roles = [role for role in member.roles if role.name not in ACQUIRABLE_RANK_ROLE_NAMES]
+    new_roles.append(target_role_obj)
+
+    if set(new_roles) != set(member.roles):
+        try:
+            await member.edit(roles=new_roles, reason="Automatic rank update")
+        except discord.Forbidden:
+            print(f"ERROR: Bot lacks permissions to manage roles for {member.name}")
+        except discord.HTTPException as e:
+            print(f"ERROR: Failed to update roles for {member.name}: {e}")
 
 
 # --- UI Views ---
@@ -268,13 +287,21 @@ class ArmoryView(discord.ui.View):
         elif self.current_page == "crafting":
             embed.title = "Crafting Menu"
             embed.description = "Select an item from the dropdown below to craft it."
+            user_intel = get_user_skills(self.author.id)['intelligence']
             for name, recipe in RECIPES.items():
+                req = recipe['intelligence_req']
                 mats_needed = ", ".join([f"{amt}x {mat}" for mat, amt in recipe["materials"].items()])
-                embed.add_field(name=f"{recipe['emoji']} {name}", value=f"**Requires:** {mats_needed}", inline=False)
+
+                if user_intel >= req:
+                    embed.add_field(name=f"{recipe['emoji']} {name} (Lvl {req} Intel)",
+                                    value=f"**Requires:** {mats_needed}", inline=False)
+                else:
+                    embed.add_field(name=f"🔒 {name} (Lvl {req} Intel)", value=f"**Requires:** {mats_needed}",
+                                    inline=False)
 
         return embed
 
-    @discord.ui.button(label="View Inventory", style=discord.ButtonStyle.secondary, emoji="�")
+    @discord.ui.button(label="View Inventory", style=discord.ButtonStyle.secondary, emoji="📦")
     async def inventory_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         self.current_page = "inventory"
         embed = await self.generate_embed()
@@ -290,14 +317,21 @@ class ArmoryView(discord.ui.View):
 class CraftingSelect(discord.ui.Select):
     def __init__(self, author: discord.Member):
         self.author = author
-        options = [discord.SelectOption(label=name, emoji=recipe["emoji"], description=recipe["description"][:100]) for
-                   name, recipe in RECIPES.items()]
+        options = [discord.SelectOption(label=name, description=recipe["description"][:100]) for name, recipe in
+                   RECIPES.items()]
         super().__init__(placeholder="Choose an item to craft...", min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
         item_to_craft = self.values[0]
         recipe = RECIPES[item_to_craft]
         author_id = str(self.author.id)
+
+        user_intel = get_user_skills(author_id)['intelligence']
+        if user_intel < recipe['intelligence_req']:
+            await interaction.response.send_message(
+                f"You aren't smart enough to craft this. You need **Level {recipe['intelligence_req']} Intelligence**.",
+                ephemeral=True)
+            return
 
         if author_id not in user_armory:
             user_armory[author_id] = {"materials": {}, "crafted_items": {}}
@@ -334,6 +368,67 @@ class CraftingSelect(discord.ui.Select):
                                             ephemeral=True)
 
 
+class TrainView(discord.ui.View):
+    def __init__(self, author: discord.Member):
+        super().__init__(timeout=60.0)
+        self.author = author
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        return interaction.user.id == self.author.id
+
+    @discord.ui.button(label="Strength", style=discord.ButtonStyle.red, emoji="💪")
+    async def train_strength(self, interaction: discord.Interaction, button: discord.ui.Button):
+        skills = get_user_skills(self.author.id)
+        if skills["strength"] >= 100:
+            await interaction.response.send_message("Your **Strength** is already at its maximum level (100).",
+                                                    ephemeral=True)
+        else:
+            skills["strength"] += 1
+            save_data(user_skills, SKILLS_FILE)
+            await interaction.response.send_message(
+                f"You feel stronger! Your **Strength** is now Level {skills['strength']}.", ephemeral=True)
+        self.stop()
+
+    @discord.ui.button(label="Agility", style=discord.ButtonStyle.green, emoji="⚡")
+    async def train_agility(self, interaction: discord.Interaction, button: discord.ui.Button):
+        skills = get_user_skills(self.author.id)
+        if skills["agility"] >= 100:
+            await interaction.response.send_message("Your **Agility** is already at its maximum level (100).",
+                                                    ephemeral=True)
+        else:
+            skills["agility"] += 1
+            save_data(user_skills, SKILLS_FILE)
+            await interaction.response.send_message(
+                f"You feel faster! Your **Agility** is now Level {skills['agility']}.", ephemeral=True)
+        self.stop()
+
+    @discord.ui.button(label="Intelligence", style=discord.ButtonStyle.blurple, emoji="🧠")
+    async def train_intelligence(self, interaction: discord.Interaction, button: discord.ui.Button):
+        skills = get_user_skills(self.author.id)
+        if skills["intelligence"] >= 100:
+            await interaction.response.send_message("Your **Intelligence** is already at its maximum level (100).",
+                                                    ephemeral=True)
+        else:
+            skills["intelligence"] += 1
+            save_data(user_skills, SKILLS_FILE)
+            await interaction.response.send_message(
+                f"You feel smarter! Your **Intelligence** is now Level {skills['intelligence']}.", ephemeral=True)
+        self.stop()
+
+    @discord.ui.button(label="Endurance", style=discord.ButtonStyle.grey, emoji="❤️")
+    async def train_endurance(self, interaction: discord.Interaction, button: discord.ui.Button):
+        skills = get_user_skills(self.author.id)
+        if skills["endurance"] >= 100:
+            await interaction.response.send_message("Your **Endurance** is already at its maximum level (100).",
+                                                    ephemeral=True)
+        else:
+            skills["endurance"] += 1
+            save_data(user_skills, SKILLS_FILE)
+            await interaction.response.send_message(
+                f"You feel more resilient! Your **Endurance** is now Level {skills['endurance']}.", ephemeral=True)
+        self.stop()
+
+
 # --- Bot Events & Tasks ---
 @bot.event
 async def on_ready():
@@ -343,6 +438,26 @@ async def on_ready():
         print("Game features are ENABLED. Attack scheduler started.")
     else:
         print("Game features are DISABLED.")
+
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    # "Davis In" Salute Event
+    if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
+        global davis_salute_event_active, davis_saluters
+        if not davis_salute_event_active:
+            davis_salute_event_active = True
+            davis_saluters = set()
+            await message.channel.send("Salute the President Immediately.")
+            await asyncio.sleep(30)
+            davis_salute_event_active = False
+            await message.channel.send(
+                f"The special salute window has closed. **{len(davis_saluters)}** soldier(s) paid their respects.")
+
+    await bot.process_commands(message)
 
 
 @bot.event
@@ -357,14 +472,14 @@ async def on_member_update(before: discord.Member, after: discord.Member):
             if rank_data["name"] == member_role.name:
                 highest_rank_owned = rank_data
     if not highest_rank_owned: return
-    baseline_xp = highest_rank_owned["xp"]
+    baseline_honor = highest_rank_owned["honor"]
     user_id = str(after.id)
-    current_xp = user_xp.get(user_id, 0)
-    if current_xp < baseline_xp:
-        user_xp[user_id] = baseline_xp
-        save_data(user_xp, XP_FILE)
+    current_honor = user_honor.get(user_id, 0)
+    if current_honor < baseline_honor:
+        user_honor[user_id] = baseline_honor
+        save_data(user_honor, HONOR_FILE)
         print(
-            f"Updated {after.display_name}'s XP to {baseline_xp} to match their highest role: '{highest_rank_owned['name']}'.")
+            f"Updated {after.display_name}'s Honor to {baseline_honor} to match their highest role: '{highest_rank_owned['name']}'.")
     await check_and_update_roles(after)
 
 
@@ -372,7 +487,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
 async def attack_scheduler():
     global attack_in_progress
     if not game_features_enabled: return
-    if not attack_in_progress and random.randint(1, 120) == 1:
+    if not attack_in_progress and random.randint(1, 60) == 1:
         channel = bot.get_channel(ATTACK_CHANNEL_ID)
         if channel:
             await initiate_attack(channel)
@@ -391,38 +506,43 @@ async def resolve_attack(channel: discord.TextChannel):
         await channel.send("The attack was undefended! Davis has fallen into chaos.")
         attack_in_progress = False
         return
+
     defense_strength = 0;
     defender_details = [];
     guild = channel.guild
-    unique_defenders = set(defenders)
+    num_defenders = len(defenders)
+
     for user_id in defenders:
         member = guild.get_member(user_id)
         if member:
+            skills = get_user_skills(user_id)
             member_rank_weight = 1
             for rank_info in reversed(RANK_ROLES):
                 for role in member.roles:
                     if role.name == rank_info["name"]: member_rank_weight = rank_info["weight"]; break
                 if member_rank_weight > 1: break
-            defense_strength += (member_rank_weight * 2)
-    for user_id in unique_defenders:
-        member = guild.get_member(user_id)
-        if member: defender_details.append(f"{member.display_name}")
-    attack_strength = random.randint(int(defense_strength * 0.7), int(defense_strength * 1.5)) + 5
+            defense_strength += (member_rank_weight + skills['agility'])
+            defender_details.append(f"{member.display_name}")
+
+    # The attack becomes proportionally weaker for each person that defends
+    difficulty_mod = max(0.8, 1.5 - (num_defenders * 0.05))
+    attack_strength = random.randint(int(defense_strength * 0.7), int(defense_strength * difficulty_mod)) + 5
+
     embed = discord.Embed(title="Battle Report", color=discord.Color.dark_red())
-    embed.add_field(name=f"Defenders ({len(unique_defenders)})", value="\n".join(defender_details) or "None",
-                    inline=False)
+    embed.add_field(name=f"Defenders ({num_defenders})", value="\n".join(defender_details) or "None", inline=False)
     embed.add_field(name="Total Defense Strength", value=str(defense_strength), inline=True)
     embed.add_field(name="Attack Strength", value=str(attack_strength), inline=True)
+
     if defense_strength >= attack_strength:
         embed.description = "🎉 **VICTORY!** The defenders have successfully repelled the attack!";
         embed.color = discord.Color.green()
-        xp_reward = random.randint(50, 100)
-        embed.set_footer(text=f"Each defender has been awarded {xp_reward} XP for their bravery.")
-        for user_id in unique_defenders:
+        honor_reward = random.randint(50, 100)
+        embed.set_footer(text=f"Each defender has been awarded {honor_reward} Honor for their bravery.")
+        for user_id in defenders:
             str_id = str(user_id);
-            user_xp[str_id] = user_xp.get(str_id, 0) + xp_reward
-        save_data(user_xp, XP_FILE)
-        for user_id in unique_defenders:
+            user_honor[str_id] = user_honor.get(str_id, 0) + honor_reward
+        save_data(user_honor, HONOR_FILE)
+        for user_id in defenders:
             member = guild.get_member(user_id)
             if member: await check_and_update_roles(member)
     else:
@@ -430,17 +550,17 @@ async def resolve_attack(channel: discord.TextChannel):
         embed.color = discord.Color.red()
     await channel.send(embed=embed)
     attack_in_progress = False;
-    defenders = []
+    defenders = set()
 
 
 async def initiate_attack(channel: discord.TextChannel):
     global attack_in_progress, defenders
     attack_in_progress = True;
-    defenders = []
+    defenders = set()
     notification_role = discord.utils.get(channel.guild.roles, name=NOTIFICATION_ROLE_NAME)
     ping_message = f"{notification_role.mention}" if notification_role else ""
     embed = discord.Embed(title="🚨 INCOMING ATTACK! 🚨",
-                          description="An enemy force is approaching Davis! All personnel must defend!",
+                          description="An enemy force is approaching Fort Davis! All personnel must defend!",
                           color=discord.Color.orange())
     embed.add_field(name="Time to React", value="60 seconds");
     embed.add_field(name="How to Fight", value="Type `>defend` in this channel to join the battle!")
@@ -457,18 +577,19 @@ async def resolve_world_boss(channel: discord.TextChannel):
     if boss_hp <= 0:
         final_embed.title = f"🎉 WORLD BOSS DEFEATED! 🎉";
         final_embed.description = f"**{boss_title}** has been vanquished by the brave soldiers of Davis!"
-        xp_reward = random.randint(250, 500)
-        final_embed.set_footer(text=f"All {len(boss_participants)} participants have been awarded {xp_reward} XP!")
+        honor_reward = random.randint(250, 500)
+        final_embed.set_footer(
+            text=f"All {len(boss_participants)} participants have been awarded {honor_reward} Honor!")
         for user_id in boss_participants:
             str_id = str(user_id);
-            user_xp[str_id] = user_xp.get(str_id, 0) + xp_reward
+            user_honor[str_id] = user_honor.get(str_id, 0) + honor_reward
             member = channel.guild.get_member(user_id)
             if member: await check_and_update_roles(member)
-        save_data(user_xp, XP_FILE)
+        save_data(user_honor, HONOR_FILE)
     else:
         final_embed.title = f"☠️ WORLD BOSS SURVIVED ☠️";
         final_embed.description = f"**{boss_title}** was too powerful and escaped. It remains with {boss_hp} HP."
-        final_embed.set_footer(text="No XP was awarded. Better luck next time!")
+        final_embed.set_footer(text="No Honor was awarded. Better luck next time!")
     if boss_event_message:
         try:
             await boss_event_message.edit(embed=final_embed, view=None)
@@ -504,17 +625,20 @@ async def gameoff(ctx):
 async def help_command(ctx):
     embed = discord.Embed(title="Davis Defense Bot Commands", description="Here are the commands you can use:",
                           color=discord.Color.gold())
-    embed.add_field(name="`>xp [@user]`", value="Check your own XP or another user's.", inline=False)
-    embed.add_field(name="`>salute [@user]`", value="Give another user a small amount of XP (5 min cooldown).",
+    embed.add_field(name="`>honor [@user]`", value="Check your own Honor or another user's.", inline=False)
+    embed.add_field(name="`>stats [@user]`", value="Check your own skills or another user's.", inline=False)
+    embed.add_field(name="`>salute [@user]`", value="Give another user a small amount of Honor (5 min cooldown).",
                     inline=False)
     if game_features_enabled:
         game_commands_value = (
-            "**`>patrol`**: Go on patrol for a chance at XP or an encounter (5 min cooldown).\n"
-            "**`>scavenge`**: Search for crafting materials (5 min cooldown).\n"
+            "**`>train`**: Opens the skill training menu (1 min cooldown).\n"
+            "**`>patrol`**: Go on patrol for a chance at Honor or an encounter (cooldown reduced by Endurance).\n"
+            "**`>scavenge`**: Search for crafting materials (cooldown reduced by Endurance).\n"
             "**`>armory [@user]`**: Check your interactive inventory and crafting menu.\n"
             "**`>use \"[item name]\"`**: Use a crafted item during a world boss fight.\n"
             "**`>defend`**: Join the defense during a server-wide attack.\n"
-            "**`>hit`**: Attack the world boss during a boss event (2s cooldown)."
+            "**`>hit`**: Attack the world boss during a boss event (2s cooldown).\n"
+            "**`>ranklist`**: Shows a list of all members in each rank."
         )
         embed.add_field(name="Game Commands (Active)", value=game_commands_value, inline=False)
     else:
@@ -553,14 +677,10 @@ async def say(ctx, channel: discord.TextChannel, *, message: str):
 @bot.command()
 @commands.is_owner()
 async def give(ctx, member: discord.Member, item_name: str, amount: int = 1):
-    """Gives a user a specified amount of a material or crafted item."""
     author_id = str(member.id)
     normalized_item_name = item_name.replace("_", " ").title()
-
     if author_id not in user_armory:
         user_armory[author_id] = {"materials": {}, "crafted_items": {}}
-
-    # Check if it's a material
     is_material = False
     for mat in MATERIALS:
         if mat["name"] == normalized_item_name:
@@ -569,8 +689,6 @@ async def give(ctx, member: discord.Member, item_name: str, amount: int = 1):
                 normalized_item_name, 0) + amount
             is_material = True
             break
-
-    # Check if it's a craftable item
     is_item = False
     if not is_material:
         if normalized_item_name in RECIPES:
@@ -578,12 +696,27 @@ async def give(ctx, member: discord.Member, item_name: str, amount: int = 1):
             user_armory[author_id]["crafted_items"][normalized_item_name] = user_armory[author_id]["crafted_items"].get(
                 normalized_item_name, 0) + amount
             is_item = True
-
     if not is_material and not is_item:
         return await ctx.reply(f"Could not find an item or material named `{normalized_item_name}`.")
-
     save_data(user_armory, ARMORY_FILE)
     await ctx.reply(f"Gave **{amount}x {normalized_item_name}** to {member.mention}.")
+
+
+@bot.command()
+@commands.is_owner()
+async def setstat(ctx, member: discord.Member, skill: str, level: int):
+    """Sets a user's skill to a specific level."""
+    skill = skill.lower()
+    user_id = str(member.id)
+    skills = get_user_skills(user_id)
+    if skill not in skills:
+        return await ctx.reply(f"Invalid skill. Use one of: `strength`, `agility`, `intelligence`, `endurance`.")
+    if not 1 <= level <= 100:
+        return await ctx.reply("Skill level must be between 1 and 100.")
+
+    skills[skill] = level
+    save_data(user_skills, SKILLS_FILE)
+    await ctx.reply(f"Set {member.mention}'s **{skill.title()}** to Level {level}.")
 
 
 @bot.command()
@@ -614,17 +747,25 @@ async def ping(ctx):
 async def patrol(ctx):
     if not game_features_enabled: return
     author_id = str(ctx.author.id)
+    skills = get_user_skills(author_id)
+    cooldown_seconds = 60 - (skills['endurance'] * 0.5)
+    cooldown_seconds = max(10, cooldown_seconds)
+
     current_time = datetime.datetime.now()
     if author_id in patrol_cooldowns:
-        if current_time - patrol_cooldowns[author_id] < datetime.timedelta(minutes=5):
-            return await ctx.reply("You need to rest. You can go on patrol again in 5 minutes.")
+        time_since = current_time - patrol_cooldowns[author_id]
+        if time_since.total_seconds() < cooldown_seconds:
+            return await ctx.reply(
+                f"You need to rest. You can go on patrol again in {cooldown_seconds - time_since.total_seconds():.1f} seconds.")
     patrol_cooldowns[author_id] = current_time
+
     if random.random() > 0.5:
-        xp_reward = random.randint(5, 10);
-        user_xp[author_id] = user_xp.get(author_id, 0) + xp_reward
-        save_data(user_xp, XP_FILE);
+        honor_reward = random.randint(5, 10);
+        user_honor[author_id] = user_honor.get(author_id, 0) + honor_reward
+        save_data(user_honor, HONOR_FILE);
         await check_and_update_roles(ctx.author)
-        return await ctx.reply(f"Your patrol was uneventful. You secured the area and gained {xp_reward} XP.")
+        return await ctx.reply(f"Your patrol was uneventful. You secured the area and gained {honor_reward} Honor.")
+
     embed = discord.Embed(title="Patrol Encounter!",
                           description="You've encountered a band of violent emos! They look hostile.",
                           color=discord.Color.dark_purple())
@@ -646,9 +787,9 @@ async def patrol(ctx):
             if member_rank_weight > 1: break
         win_chance = min(0.30 + (member_rank_weight * 0.05), 0.95)
         if random.random() < win_chance:
-            xp_reward = random.randint(75, 150);
-            user_xp[author_id] = user_xp.get(author_id, 0) + xp_reward
-            save_data(user_xp, XP_FILE)
+            honor_reward = random.randint(75, 150);
+            user_honor[author_id] = user_honor.get(author_id, 0) + honor_reward
+            save_data(user_honor, HONOR_FILE)
             stats = user_stats.get(author_id, {"patrol_wins": 0});
             stats["patrol_wins"] += 1
             user_stats[author_id] = stats;
@@ -660,12 +801,12 @@ async def patrol(ctx):
                     await ctx.send(
                         f"Congratulations, {ctx.author.mention}! For winning 100 patrol encounters, you have been awarded the **{EMO_HUNTER_ROLE_NAME}** role!")
             result_embed = discord.Embed(title="VICTORY!",
-                                         description=f"You bravely fought and defeated the emos! You earned {xp_reward} XP for your valor.",
+                                         description=f"You bravely fought and defeated the emos! You earned {honor_reward} Honor for your valor.",
                                          color=discord.Color.green())
             await message.edit(embed=result_embed)
         else:
             result_embed = discord.Embed(title="DEFEAT!",
-                                         description="The emos were stronger than they looked. You were defeated but managed to escape. You earned no XP.",
+                                         description="The emos were stronger than they looked. You were defeated but managed to escape. You earned no Honor.",
                                          color=discord.Color.red())
             await message.edit(embed=result_embed)
 
@@ -674,17 +815,26 @@ async def patrol(ctx):
 async def scavenge(ctx):
     if not game_features_enabled: return
     author_id = str(ctx.author.id)
+    skills = get_user_skills(author_id)
+    cooldown_seconds = 60 - (skills['endurance'] * 0.5)
+    cooldown_seconds = max(10, cooldown_seconds)
+
     current_time = datetime.datetime.now()
     if author_id in scavenge_cooldowns:
-        if current_time - scavenge_cooldowns[author_id] < datetime.timedelta(minutes=5):
-            return await ctx.reply("You've already picked this area clean. You can scavenge again in 5 minutes.")
+        time_since = current_time - scavenge_cooldowns[author_id]
+        if time_since.total_seconds() < cooldown_seconds:
+            return await ctx.reply(
+                f"You've already picked this area clean. You can scavenge again in {cooldown_seconds - time_since.total_seconds():.1f} seconds.")
     scavenge_cooldowns[author_id] = current_time
+
     if author_id not in user_armory:
         user_armory[author_id] = {"materials": {}, "crafted_items": {}}
+
+    num_items_found = random.randint(2, 4) + (skills['intelligence'] // 10)
+
     found_materials = {};
     materials_list = [m["name"] for m in MATERIALS];
     weights = [MATERIAL_RARITY_WEIGHTS[m["rarity"]] for m in MATERIALS]
-    num_items_found = random.randint(2, 4)
     found_items = random.choices(materials_list, weights=weights, k=num_items_found)
     for item_name in found_items:
         found_materials[item_name] = found_materials.get(item_name, 0) + 1
@@ -779,6 +929,7 @@ async def hit(ctx):
         ctx.command.reset_cooldown(ctx)
         return
     boss_participants.add(ctx.author.id)
+    skills = get_user_skills(ctx.author.id)
     member_rank_weight = 1
     for rank_info in reversed(RANK_ROLES):
         for role in ctx.author.roles:
@@ -792,7 +943,7 @@ async def hit(ctx):
             weapon_bonus = max(weapon_bonus, recipe.get("weight_bonus", 0))
 
     total_weight = member_rank_weight + weapon_bonus
-    damage = (random.randint(5, 15) + total_weight) * 2
+    damage = (random.randint(5, 15) + total_weight + skills['strength'])
     boss_hp -= damage
 
     if boss_event_message:
@@ -811,8 +962,9 @@ async def defend(ctx):
     global attack_in_progress, defenders
     if not attack_in_progress: return await ctx.reply("There is no attack to defend against right now.",
                                                       delete_after=10)
+    if ctx.author.id in defenders: return await ctx.reply("You are already in the defensive line!", delete_after=10)
 
-    defenders.append(ctx.author.id)
+    defenders.add(ctx.author.id)
     await ctx.message.add_reaction("🛡️")
 
 
@@ -827,51 +979,147 @@ async def forceattack(ctx):
 
 @bot.command()
 async def salute(ctx, member: discord.Member):
+    global davis_salute_event_active, davis_saluters
+    if not game_features_enabled: return
+
+    if davis_salute_event_active and member.id == DAVIS_ID:
+        if ctx.author.id in davis_saluters:
+            return await ctx.reply("You have already saluted the President during this event.", delete_after=10)
+        davis_saluters.add(ctx.author.id)
+        honor_to_give = 50
+        await ctx.message.add_reaction('🫡')
+    else:
+        author_id = str(ctx.author.id)
+        current_time = datetime.datetime.now()
+        if ctx.author == member: return await ctx.reply("You cannot salute yourself.")
+        if author_id in salute_cooldowns:
+            if current_time - salute_cooldowns[author_id] < datetime.timedelta(minutes=5):
+                return await ctx.reply("You can only salute once every 5 minutes.")
+        salute_cooldowns[author_id] = current_time
+        honor_to_give = random.randint(5, 15)
+        await ctx.send(f"o7 {ctx.author.mention} salutes {member.mention}! They have gained {honor_to_give} Honor.")
+
+    member_id = str(member.id)
+    user_honor[member_id] = user_honor.get(member_id, 0) + honor_to_give
+    save_data(user_honor, HONOR_FILE)
+    await check_and_update_roles(member)
+
+
+@bot.command()
+async def honor(ctx, member: discord.Member = None):
+    if not game_features_enabled: return
+    if member is None:
+        member = ctx.author
+
+    member_id = str(member.id)
+    current_honor = user_honor.get(member_id, 0)
+
+    current_rank_data = None
+    next_rank_data = None
+    current_rank_index = -1
+    for i, rank in enumerate(RANK_ROLES):
+        if current_honor >= rank["honor"]:
+            current_rank_data = rank
+            current_rank_index = i
+        else:
+            break
+
+    if current_rank_index != -1 and current_rank_index + 1 < len(RANK_ROLES):
+        next_rank_data = RANK_ROLES[current_rank_index + 1]
+
+    embed = discord.Embed(color=discord.Color.blue())
+    embed.set_author(name=f"{member.display_name}'s Profile", icon_url=member.display_avatar.url)
+    embed.add_field(name="Total Honor", value=f"{current_honor}", inline=True)
+
+    if current_rank_data:
+        embed.add_field(name="Current Rank", value=current_rank_data['name'], inline=True)
+
+    if next_rank_data:
+        honor_for_next = next_rank_data['honor']
+        honor_of_current = current_rank_data['honor'] if current_rank_data else 0
+
+        progress = current_honor - honor_of_current
+        needed = honor_for_next - honor_of_current
+
+        if needed > 0:
+            percentage = (progress / needed) * 100
+            bar = '█' * int(percentage / 10) + '─' * (10 - int(percentage / 10))
+            embed.add_field(
+                name=f"Progress to {next_rank_data['name']}",
+                value=f"`[{bar}]`\n{progress} / {needed} Honor",
+                inline=False
+            )
+        else:
+            embed.add_field(name="Progress", value="Calculating...", inline=False)
+
+    else:
+        embed.add_field(name="Progress", value="You have reached the highest rank!", inline=False)
+
+    await ctx.reply(embed=embed)
+
+
+@bot.command()
+async def stats(ctx, member: discord.Member = None):
+    if not game_features_enabled: return
+    if member is None:
+        member = ctx.author
+
+    skills = get_user_skills(member.id)
+    embed = discord.Embed(title="Skill Profile", color=discord.Color.dark_orange())
+    embed.set_author(name=f"{member.display_name}'s Stats", icon_url=member.display_avatar.url)
+    embed.add_field(name="💪 Strength", value=f"Level {skills['strength']}", inline=True)
+    embed.add_field(name="⚡ Agility", value=f"Level {skills['agility']}", inline=True)
+    embed.add_field(name="🧠 Intelligence", value=f"Level {skills['intelligence']}", inline=True)
+    embed.add_field(name="❤️ Endurance", value=f"Level {skills['endurance']}", inline=True)
+    await ctx.reply(embed=embed)
+
+
+@bot.command()
+async def train(ctx):
     if not game_features_enabled: return
     author_id = str(ctx.author.id)
     current_time = datetime.datetime.now()
-    if ctx.author == member: return await ctx.reply("You cannot salute yourself.")
-    if author_id in salute_cooldowns:
-        if current_time - salute_cooldowns[author_id] < datetime.timedelta(minutes=5):
-            return await ctx.reply("You can only salute once every 5 minutes.")
-    salute_cooldowns[author_id] = current_time
-    xp_to_give = random.randint(5, 15)
-    member_id = str(member.id)
-    user_xp[member_id] = user_xp.get(member_id, 0) + xp_to_give
-    save_data(user_xp, XP_FILE)
-    await check_and_update_roles(member)
-    await ctx.send(f"o7 {ctx.author.mention} salutes {member.mention}! They have gained {xp_to_give} XP.")
 
+    if author_id in train_cooldowns:
+        if current_time - train_cooldowns[author_id] < datetime.timedelta(minutes=1):
+            return await ctx.reply(
+                "You are still tired from your last training session. You can train again in 1 minute.")
 
-@bot.command()
-async def xp(ctx, member: discord.Member = None):
-    if not game_features_enabled: return
-    if member is None: member = ctx.author
-    member_id = str(member.id);
-    xp_amount = user_xp.get(member_id, 0)
-    await ctx.reply(f"{member.display_name} has {xp_amount} XP.")
+    train_cooldowns[author_id] = current_time
 
+    embed = discord.Embed(title="Training Regimen",
+                          description="Choose a skill to train. Each session improves a skill by 1 level.",
+                          color=discord.Color.from_rgb(100, 100, 200))
+    embed.add_field(name="💪 Strength", value="Increases damage dealt during events.", inline=False)
+    embed.add_field(name="⚡ Agility", value="Increases effectiveness during server defense.", inline=False)
+    embed.add_field(name="🧠 Intelligence", value="Unlocks higher-tier crafting and increases scavenging yield.",
+                    inline=False)
+    embed.add_field(name="❤️ Endurance", value="Reduces cooldowns for `>patrol` and `>scavenge`.", inline=False)
 
-@bot.command()
-@commands.is_owner()
-async def setxp(ctx, member: discord.Member, amount: int):
-    if not game_features_enabled: return
-    member_id = str(member.id);
-    user_xp[member_id] = amount;
-    save_data(user_xp, XP_FILE)
-    await check_and_update_roles(member)
-    await ctx.reply(f"Set {member.mention}'s XP to {amount}.")
+    view = TrainView(ctx.author)
+    await ctx.reply(embed=embed, view=view, ephemeral=True)
 
 
 @bot.command()
 @commands.is_owner()
-async def addxp(ctx, member: discord.Member, amount: int):
+async def sethonor(ctx, member: discord.Member, amount: int):
     if not game_features_enabled: return
     member_id = str(member.id);
-    user_xp[member_id] = user_xp.get(member_id, 0) + amount;
-    save_data(user_xp, XP_FILE)
+    user_honor[member_id] = amount;
+    save_data(user_honor, HONOR_FILE)
     await check_and_update_roles(member)
-    await ctx.reply(f"Added {amount} XP to {member.mention}. They now have {user_xp[member_id]} XP.")
+    await ctx.reply(f"Set {member.mention}'s Honor to {amount}.")
+
+
+@bot.command()
+@commands.is_owner()
+async def addhonor(ctx, member: discord.Member, amount: int):
+    if not game_features_enabled: return
+    member_id = str(member.id);
+    user_honor[member_id] = user_honor.get(member_id, 0) + amount;
+    save_data(user_honor, HONOR_FILE)
+    await check_and_update_roles(member)
+    await ctx.reply(f"Added {amount} Honor to {member.mention}. They now have {user_honor[member_id]} Honor.")
 
 
 @bot.event

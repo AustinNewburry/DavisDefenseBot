@@ -1,26 +1,190 @@
 {
     "819414821182242848": {
         "materials": {
-            "Gunpowder": 1,
-            "Duct Tape": 2,
+            "Gunpowder": 138,
+            "Duct Tape": 142,
+            "Scrap Metal": 138,
+            "Medical Supplies": 77,
+            "Electronics": 49,
+            "High-Grade Steel": 29,
+            "Military-Grade Composite": 24,
+            "Advanced Optics": 16,
+            "Nuclear Material": 1
+        },
+        "crafted_items": {
+            "Pistol": 1,
+            "Shotgun": 1,
+            "Assault Rifle": 1,
+            "Sniper Rifle": 1,
+            "Nightvision Goggles": 1,
+            "Suppressor": 1,
+            "Rocket Launcher": 1,
+            "Pipe Bomb": 3
+        }
+    },
+    "898508513574285312": {
+        "materials": {
+            "Gunpowder": 46,
+            "Duct Tape": 42,
+            "Scrap Metal": 13,
+            "Electronics": 17,
+            "Medical Supplies": 17,
+            "Advanced Optics": 10,
+            "High-Grade Steel": 18,
+            "Military-Grade Composite": 9,
+            "Nuclear Material": 1
+        },
+        "crafted_items": {
+            "Pipe Bomb": 1,
+            "Pistol": 1,
+            "Suppressor": 1,
+            "Medkit": 1
+        }
+    },
+    "718929211297103923": {
+        "materials": {
+            "Duct Tape": 10,
+            "Medical Supplies": 7,
+            "Gunpowder": 10,
+            "Advanced Optics": 2,
+            "High-Grade Steel": 5,
+            "Scrap Metal": 11,
+            "Electronics": 2
+        },
+        "crafted_items": {}
+    },
+    "900337577066909717": {
+        "materials": {
+            "Gunpowder": 50,
+            "Medical Supplies": 20,
+            "Scrap Metal": 40,
+            "High-Grade Steel": 21,
+            "Electronics": 27,
+            "Duct Tape": 45,
+            "Military-Grade Composite": 6,
+            "Advanced Optics": 4
+        },
+        "crafted_items": {}
+    },
+    "1041771286323535973": {
+        "materials": {
+            "Medical Supplies": 1,
+            "Gunpowder": 2,
+            "Duct Tape": 1,
+            "Scrap Metal": 2,
+            "Electronics": 1
+        },
+        "crafted_items": {}
+    },
+    "668152832469237770": {
+        "materials": {},
+        "crafted_items": {
+            "Coast Guard Battleship": 1
+        }
+    },
+    "1001693686893125713": {
+        "materials": {
+            "Duct Tape": 12,
+            "Scrap Metal": 16,
+            "High-Grade Steel": 4,
+            "Medical Supplies": 1,
+            "Electronics": 2,
+            "Gunpowder": 9,
+            "Advanced Optics": 1,
+            "Military-Grade Composite": 2
+        },
+        "crafted_items": {}
+    },
+    "250790992045670400": {
+        "materials": {
+            "Electronics": 1,
+            "Duct Tape": 1,
             "Scrap Metal": 1
         },
         "crafted_items": {}
     },
-    "898508513574285312": {
+    "247159840416333824": {
         "materials": {
-            "Gunpowder": 3,
+            "High-Grade Steel": 3,
+            "Electronics": 1,
+            "Scrap Metal": 1,
+            "Medical Supplies": 1,
             "Duct Tape": 1
         },
         "crafted_items": {}
     },
-    "718929211297103923": {
+    "1373018466105425990": {
         "materials": {
-            "Duct Tape": 3,
-            "Medical Supplies": 1,
-            "Gunpowder": 1,
             "Advanced Optics": 1,
-            "High-Grade Steel": 1
+            "Electronics": 11,
+            "Gunpowder": 66,
+            "Medical Supplies": 34,
+            "Military-Grade Composite": 19,
+            "Scrap Metal": 7,
+            "High-Grade Steel": 17,
+            "Duct Tape": 53,
+            "Nuclear Material": 1
+        },
+        "crafted_items": {
+            "Medkit": 1,
+            "Pipe Bomb": 1,
+            "Pistol": 1,
+            "Assault Rifle": 1,
+            "Suppressor": 1,
+            "Nightvision Goggles": 1
+        }
+    },
+    "841327772428271697": {
+        "materials": {
+            "Medical Supplies": 7,
+            "Scrap Metal": 6,
+            "Electronics": 8,
+            "Duct Tape": 11,
+            "Gunpowder": 6,
+            "High-Grade Steel": 4,
+            "Military-Grade Composite": 1
+        },
+        "crafted_items": {
+            "Pipe Bomb": 1
+        }
+    },
+    "1367331728796160070": {
+        "materials": {
+            "Duct Tape": 5,
+            "Gunpowder": 4,
+            "Electronics": 3,
+            "Scrap Metal": 4
+        },
+        "crafted_items": {}
+    },
+    "683311496977186896": {
+        "materials": {
+            "Gunpowder": 1,
+            "Scrap Metal": 4,
+            "High-Grade Steel": 1,
+            "Medical Supplies": 1
+        },
+        "crafted_items": {}
+    },
+    "1166616617371840565": {
+        "materials": {
+            "Gunpowder": 1,
+            "Duct Tape": 1,
+            "Electronics": 1,
+            "Medical Supplies": 1
+        },
+        "crafted_items": {}
+    },
+    "343374294752952321": {
+        "materials": {
+            "Duct Tape": 3
+        },
+        "crafted_items": {}
+    },
+    "767182582630449162": {
+        "materials": {
+            "Electronics": 1,
+            "Medical Supplies": 1
         },
         "crafted_items": {}
     }
