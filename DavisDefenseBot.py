@@ -6,15 +6,22 @@ import datetime
 import json
 import random
 import asyncio
+import sys
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+
+# Add a check to ensure the token was loaded correctly
+if TOKEN is None:
+    print("FATAL ERROR: DISCORD_BOT_TOKEN not found in .env file.")
+    print("Please ensure the .env file exists in the same directory as the bot script and contains the correct token.")
+    sys.exit(1)
 
 OWNER_ID = 819414821182242848
 DAVIS_ID = 668152832469237770
 
 # --- Bot Configuration ---
-ATTACK_CHANNEL_ID = 1383124472193744956
+ATTACK_CHANNEL_ID = 0
 NOTIFICATION_ROLE_NAME = "HDAAF Notifications"
 ANNOUNCEMENT_CHANNEL_NAME = "hdaaf-announcements"
 EMO_HUNTER_ROLE_NAME = "Emo Hunter"
@@ -62,7 +69,7 @@ MATERIAL_RARITY_WEIGHTS = {
 RECIPES = {
     "Pipe Bomb": {
         "description": "A simple, yet effective, explosive device.",
-        "materials": {"Scrap Metal": 5, "Gunpowder": 3, "Duct Tape": 1}, "emoji": "�", "type": "consumable",
+        "materials": {"Scrap Metal": 5, "Gunpowder": 3, "Duct Tape": 1}, "emoji": "💣", "type": "consumable",
         "intelligence_req": 5
     },
     "Medkit": {
@@ -487,7 +494,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
 async def attack_scheduler():
     global attack_in_progress
     if not game_features_enabled: return
-    if not attack_in_progress and random.randint(1, 60) == 1:
+    if not attack_in_progress and random.randint(1, 120) == 1:
         channel = bot.get_channel(ATTACK_CHANNEL_ID)
         if channel:
             await initiate_attack(channel)
@@ -524,7 +531,6 @@ async def resolve_attack(channel: discord.TextChannel):
             defense_strength += (member_rank_weight + skills['agility'])
             defender_details.append(f"{member.display_name}")
 
-    # The attack becomes proportionally weaker for each person that defends
     difficulty_mod = max(0.8, 1.5 - (num_defenders * 0.05))
     attack_strength = random.randint(int(defense_strength * 0.7), int(defense_strength * difficulty_mod)) + 5
 
@@ -560,7 +566,7 @@ async def initiate_attack(channel: discord.TextChannel):
     notification_role = discord.utils.get(channel.guild.roles, name=NOTIFICATION_ROLE_NAME)
     ping_message = f"{notification_role.mention}" if notification_role else ""
     embed = discord.Embed(title="🚨 INCOMING ATTACK! 🚨",
-                          description="An enemy force is approaching Fort Davis! All personnel must defend!",
+                          description="An enemy force is approaching Davis! All personnel must defend!",
                           color=discord.Color.orange())
     embed.add_field(name="Time to React", value="60 seconds");
     embed.add_field(name="How to Fight", value="Type `>defend` in this channel to join the battle!")
