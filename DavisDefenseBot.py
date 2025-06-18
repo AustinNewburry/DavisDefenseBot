@@ -151,7 +151,7 @@ boss_max_hp = 0
 boss_title = ""
 boss_participants = set()
 boss_event_message = None
-boss_health_dirty = False  # Flag to signal health bar update
+boss_health_dirty = False
 
 # --- Data File Management ---
 HONOR_FILE = "honor.json"
@@ -454,6 +454,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -532,6 +533,8 @@ async def resolve_attack(channel: discord.TextChannel):
     defense_strength = 0;
     defender_details = [];
     guild = channel.guild
+    num_defenders = len(defenders)
+
     for user_id in defenders:
         member = guild.get_member(user_id)
         if member:
@@ -544,11 +547,11 @@ async def resolve_attack(channel: discord.TextChannel):
             defense_strength += (member_rank_weight + skills['agility'])
             defender_details.append(f"{member.display_name}")
 
-    difficulty_mod = max(0.8, 1.5 - (len(defenders) * 0.05))
+    difficulty_mod = max(0.8, 1.5 - (num_defenders * 0.05))
     attack_strength = random.randint(int(defense_strength * 0.7), int(defense_strength * difficulty_mod)) + 5
 
     embed = discord.Embed(title="Battle Report", color=discord.Color.dark_red())
-    embed.add_field(name=f"Defenders ({len(defenders)})", value="\n".join(defender_details) or "None", inline=False)
+    embed.add_field(name=f"Defenders ({num_defenders})", value="\n".join(defender_details) or "None", inline=False)
     embed.add_field(name="Total Defense Strength", value=str(defense_strength), inline=True)
     embed.add_field(name="Attack Strength", value=str(attack_strength), inline=True)
 
@@ -963,9 +966,8 @@ async def hit(ctx):
     total_weight = member_rank_weight + weapon_bonus
     damage = (random.randint(5, 15) + total_weight + skills['strength'])
     boss_hp -= damage
-    boss_health_dirty = True  # Signal that the health bar needs an update
+    boss_health_dirty = True
 
-    # Do not edit the message here to avoid rate limits
     await ctx.message.add_reaction('⚔️')
 
 
