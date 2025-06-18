@@ -7,11 +7,11 @@ import json
 import random
 import asyncio
 import sys
+import subprocess
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 
-# Add a check to ensure the token was loaded correctly
 if TOKEN is None:
     print("FATAL ERROR: DISCORD_BOT_TOKEN not found in .env file.")
     print("Please ensure the .env file exists in the same directory as the bot script and contains the correct token.")
@@ -151,6 +151,7 @@ boss_max_hp = 0
 boss_title = ""
 boss_participants = set()
 boss_event_message = None
+boss_health_dirty = False  # Flag to signal health bar update
 
 # --- Data File Management ---
 HONOR_FILE = "honor.json"
@@ -442,7 +443,8 @@ async def on_ready():
     print(f"✅ Logged in as {bot.user} (ID: {bot.user.id})")
     if game_features_enabled:
         attack_scheduler.start()
-        print("Game features are ENABLED. Attack scheduler started.")
+        health_bar_updater.start()
+        print("Game features are ENABLED. Schedulers started.")
     else:
         print("Game features are DISABLED.")
 
@@ -452,7 +454,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -502,8 +503,22 @@ async def attack_scheduler():
             print(f"Error: Attack channel with ID {ATTACK_CHANNEL_ID} not found.")
 
 
+@tasks.loop(seconds=2)
+async def health_bar_updater():
+    global boss_health_dirty, boss_event_message, boss_hp, boss_max_hp
+    if boss_event_active and boss_health_dirty and boss_event_message:
+        try:
+            original_embed = boss_event_message.embeds[0]
+            original_embed.set_field_at(0, name="Health", value=create_health_bar(boss_hp, boss_max_hp), inline=False)
+            await boss_event_message.edit(embed=original_embed)
+            boss_health_dirty = False
+        except discord.HTTPException as e:
+            print(f"Failed to update health bar: {e}")
+
+
 @attack_scheduler.before_loop
-async def before_attack_scheduler(): await bot.wait_until_ready()
+@health_bar_updater.before_loop
+async def before_tasks(): await bot.wait_until_ready()
 
 
 # --- Game Logic ---
@@ -517,8 +532,6 @@ async def resolve_attack(channel: discord.TextChannel):
     defense_strength = 0;
     defender_details = [];
     guild = channel.guild
-    num_defenders = len(defenders)
-
     for user_id in defenders:
         member = guild.get_member(user_id)
         if member:
@@ -531,11 +544,11 @@ async def resolve_attack(channel: discord.TextChannel):
             defense_strength += (member_rank_weight + skills['agility'])
             defender_details.append(f"{member.display_name}")
 
-    difficulty_mod = max(0.8, 1.5 - (num_defenders * 0.05))
+    difficulty_mod = max(0.8, 1.5 - (len(defenders) * 0.05))
     attack_strength = random.randint(int(defense_strength * 0.7), int(defense_strength * difficulty_mod)) + 5
 
     embed = discord.Embed(title="Battle Report", color=discord.Color.dark_red())
-    embed.add_field(name=f"Defenders ({num_defenders})", value="\n".join(defender_details) or "None", inline=False)
+    embed.add_field(name=f"Defenders ({len(defenders)})", value="\n".join(defender_details) or "None", inline=False)
     embed.add_field(name="Total Defense Strength", value=str(defense_strength), inline=True)
     embed.add_field(name="Attack Strength", value=str(attack_strength), inline=True)
 
@@ -614,7 +627,8 @@ async def gameon(ctx):
     if game_features_enabled: return await ctx.reply("Game features are already enabled.")
     game_features_enabled = True
     if not attack_scheduler.is_running(): attack_scheduler.start()
-    await ctx.reply("✅ Game features have been **ENABLED**. The attack scheduler is now running.")
+    if not health_bar_updater.is_running(): health_bar_updater.start()
+    await ctx.reply("✅ Game features have been **ENABLED**. Schedulers are now running.")
 
 
 @bot.command()
@@ -624,7 +638,8 @@ async def gameoff(ctx):
     if not game_features_enabled: return await ctx.reply("Game features are already disabled.")
     game_features_enabled = False
     if attack_scheduler.is_running(): attack_scheduler.cancel()
-    await ctx.reply("❌ Game features have been **DISABLED**. The attack scheduler is now stopped.")
+    if health_bar_updater.is_running(): health_bar_updater.cancel()
+    await ctx.reply("❌ Game features have been **DISABLED**. Schedulers are now stopped.")
 
 
 @bot.command(name="help")
@@ -868,7 +883,7 @@ async def armory(ctx, member: discord.Member = None):
 @bot.command()
 async def use(ctx, *, item_name: str):
     if not game_features_enabled: return
-    global boss_hp
+    global boss_hp, boss_health_dirty
     author_id = str(ctx.author.id)
     if not boss_event_active:
         return await ctx.reply("There is no event active to use an item in.")
@@ -882,12 +897,9 @@ async def use(ctx, *, item_name: str):
         damage = random.randint(250, 400)
         boss_hp -= damage
         boss_participants.add(ctx.author.id)
+        boss_health_dirty = True
         await ctx.send(
             f"💥 {ctx.author.mention} throws a **Pipe Bomb** at **{boss_title}**, dealing a massive **{damage}** damage!")
-        if boss_event_message:
-            original_embed = boss_event_message.embeds[0]
-            original_embed.set_field_at(0, name="Health", value=create_health_bar(boss_hp, boss_max_hp), inline=False)
-            await boss_event_message.edit(embed=original_embed)
     else:
         await ctx.reply(f"You can't use `{normalized_item_name}` right now.")
 
@@ -930,7 +942,7 @@ async def worldboss(ctx, *, params: str):
 @commands.cooldown(1, 2, commands.BucketType.user)
 async def hit(ctx):
     if not game_features_enabled: return
-    global boss_event_active, boss_hp, boss_participants, boss_event_message
+    global boss_event_active, boss_hp, boss_participants, boss_health_dirty
     if not boss_event_active:
         ctx.command.reset_cooldown(ctx)
         return
@@ -951,15 +963,10 @@ async def hit(ctx):
     total_weight = member_rank_weight + weapon_bonus
     damage = (random.randint(5, 15) + total_weight + skills['strength'])
     boss_hp -= damage
+    boss_health_dirty = True  # Signal that the health bar needs an update
 
-    if boss_event_message:
-        original_embed = boss_event_message.embeds[0]
-        original_embed.set_field_at(0, name="Health", value=create_health_bar(boss_hp, boss_max_hp), inline=False)
-        await boss_event_message.edit(embed=original_embed)
-    try:
-        await ctx.message.delete()
-    except discord.Forbidden:
-        pass
+    # Do not edit the message here to avoid rate limits
+    await ctx.message.add_reaction('⚔️')
 
 
 @bot.command()
@@ -1126,6 +1133,35 @@ async def addhonor(ctx, member: discord.Member, amount: int):
     save_data(user_honor, HONOR_FILE)
     await check_and_update_roles(member)
     await ctx.reply(f"Added {amount} Honor to {member.mention}. They now have {user_honor[member_id]} Honor.")
+
+
+@bot.command()
+@commands.is_owner()
+async def ranklist(ctx):
+    """Displays a list of all members in each rank."""
+    if not game_features_enabled: return
+
+    embed = discord.Embed(title="Server Rank Roster", color=discord.Color.from_rgb(200, 160, 100))
+
+    # Iterate through ranks from highest to lowest
+    for rank_data in reversed(RANK_ROLES):
+        role_name = rank_data["name"]
+        role_obj = discord.utils.get(ctx.guild.roles, name=role_name)
+
+        if role_obj:
+            members_with_role = [member.mention for member in role_obj.members]
+            if members_with_role:
+                # To avoid hitting discord embed field limits, chunk the list
+                member_list_str = "\n".join(members_with_role)
+                if len(member_list_str) > 1024:
+                    member_list_str = member_list_str[:1020] + "..."
+
+                embed.add_field(name=f"**{role_name}**", value=member_list_str, inline=False)
+
+    if not embed.fields:
+        embed.description = "No members currently hold any ranks."
+
+    await ctx.send(embed=embed)
 
 
 @bot.event
