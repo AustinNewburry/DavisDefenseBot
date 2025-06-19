@@ -28,20 +28,20 @@ EMO_HUNTER_ROLE_NAME = "Emo Hunter"
 
 # --- Game Data Structures ---
 RANK_ROLES = [
-    {"name": "Private", "honor": 0, "weight": 1},
-    {"name": "Private First Class", "honor": 150, "weight": 2},
-    {"name": "Corporal", "honor": 600, "weight": 3},
-    {"name": "Sergeant", "honor": 1350, "weight": 4},
-    {"name": "Staff Sergeant", "honor": 2400, "weight": 5},
-    {"name": "Master Sergeant", "honor": 3750, "weight": 6},
-    {"name": "Sergeant Major", "honor": 5400, "weight": 7},
-    {"name": "Lieutenant", "honor": 7350, "weight": 8},
-    {"name": "Captain", "honor": 9600, "weight": 9},
-    {"name": "Major", "honor": 12150, "weight": 10},
-    {"name": "Colonel", "honor": 15000, "weight": 11},
-    {"name": "Brigadier General", "honor": 18150, "weight": 12},
-    {"name": "General", "honor": 21600, "weight": 13},
-    {"name": "General of the Army", "honor": 25350, "weight": 15}
+    {"name": "Private", "honor": 0, "weight": 1, "base_health": 100},
+    {"name": "Private First Class", "honor": 150, "weight": 2, "base_health": 120},
+    {"name": "Corporal", "honor": 600, "weight": 3, "base_health": 140},
+    {"name": "Sergeant", "honor": 1350, "weight": 4, "base_health": 160},
+    {"name": "Staff Sergeant", "honor": 2400, "weight": 5, "base_health": 180},
+    {"name": "Master Sergeant", "honor": 3750, "weight": 6, "base_health": 200},
+    {"name": "Sergeant Major", "honor": 5400, "weight": 7, "base_health": 220},
+    {"name": "Lieutenant", "honor": 7350, "weight": 8, "base_health": 250},
+    {"name": "Captain", "honor": 9600, "weight": 9, "base_health": 280},
+    {"name": "Major", "honor": 12150, "weight": 10, "base_health": 320},
+    {"name": "Colonel", "honor": 15000, "weight": 11, "base_health": 360},
+    {"name": "Brigadier General", "honor": 18150, "weight": 12, "base_health": 400},
+    {"name": "General", "honor": 21600, "weight": 13, "base_health": 450},
+    {"name": "General of the Army", "honor": 25350, "weight": 15, "base_health": 500}
 ]
 ACQUIRABLE_RANK_ROLES = RANK_ROLES[:11]
 RANK_ROLE_NAMES = {role["name"] for role in RANK_ROLES}
@@ -70,11 +70,12 @@ RECIPES = {
     "Pipe Bomb": {
         "description": "A simple, yet effective, explosive device.",
         "materials": {"Scrap Metal": 5, "Gunpowder": 3, "Duct Tape": 1}, "emoji": "💣", "type": "consumable",
-        "intelligence_req": 5
+        "intelligence_req": 5, "pvp_effect": {"damage": (40, 60)}
     },
     "Medkit": {
         "description": "Restores health in the field.",
-        "materials": {"Medical Supplies": 5, "Duct Tape": 2}, "emoji": "➕", "type": "consumable", "intelligence_req": 10
+        "materials": {"Medical Supplies": 5, "Duct Tape": 2}, "emoji": "➕", "type": "consumable",
+        "intelligence_req": 10, "pvp_effect": {"heal": (50, 80)}
     },
     "Pistol": {
         "description": "Standard issue sidearm. Adds +2 power.",
@@ -118,7 +119,7 @@ RECIPES = {
     "Tactical Nuke": {
         "description": "The ultimate weapon. Use with extreme caution.",
         "materials": {"Nuclear Material": 3, "Military-Grade Composite": 20, "Electronics": 30, "High-Grade Steel": 50},
-        "emoji": "☢️", "type": "consumable", "intelligence_req": 90
+        "emoji": "☢️", "type": "consumable", "intelligence_req": 90, "pvp_effect": {"damage": 9999}
     },
     "Coast Guard Battleship": {
         "description": "A formidable naval vessel.",
@@ -152,6 +153,8 @@ boss_title = ""
 boss_participants = set()
 boss_event_message = None
 boss_health_dirty = False
+pvp_invitations = {}
+active_pvp_matches = {}
 
 # --- Data File Management ---
 HONOR_FILE = "honor.json"
@@ -187,12 +190,20 @@ def get_user_skills(user_id):
     return user_skills[user_id]
 
 
+def get_user_stats(user_id):
+    user_id = str(user_id)
+    if user_id not in user_stats:
+        user_stats[user_id] = {"patrol_wins": 0, "kill_streak": 0}
+        save_data(user_stats, STATS_FILE)
+    return user_stats[user_id]
+
+
 def create_health_bar(current_hp, max_hp, length=20):
     current_hp = max(0, current_hp)
-    percentage = current_hp / max_hp
+    percentage = current_hp / max_hp if max_hp > 0 else 0
     filled_length = int(length * percentage)
     bar = '█' * filled_length + '─' * (length - filled_length)
-    return f"`[{bar}]`\n**{current_hp} / {max_hp} HP**"
+    return f"`[{bar}]`\n**{int(current_hp)} / {int(max_hp)} HP**"
 
 
 # --- Role Management ---
@@ -655,11 +666,13 @@ async def help_command(ctx):
                     inline=False)
     if game_features_enabled:
         game_commands_value = (
+            "**`>pvp @user [wager]`**: Challenge a user to a duel for Honor.\n"
+            "**`>pvpaccept`**: Accept a duel invitation.\n"
+            "**`>killstreak`**: View the PvP killstreak leaderboard.\n"
             "**`>train`**: Opens the skill training menu (1 min cooldown).\n"
             "**`>patrol`**: Go on patrol for a chance at Honor or an encounter (cooldown reduced by Endurance).\n"
             "**`>scavenge`**: Search for crafting materials (cooldown reduced by Endurance).\n"
             "**`>armory [@user]`**: Check your interactive inventory and crafting menu.\n"
-            "**`>use \"[item name]\"`**: Use a crafted item during a world boss fight.\n"
             "**`>defend`**: Join the defense during a server-wide attack.\n"
             "**`>hit`**: Attack the world boss during a boss event (2s cooldown).\n"
             "**`>ranklist`**: Shows a list of all members in each rank."
@@ -814,9 +827,8 @@ async def patrol(ctx):
             honor_reward = random.randint(75, 150);
             user_honor[author_id] = user_honor.get(author_id, 0) + honor_reward
             save_data(user_honor, HONOR_FILE)
-            stats = user_stats.get(author_id, {"patrol_wins": 0});
+            stats = get_user_stats(author_id);
             stats["patrol_wins"] += 1
-            user_stats[author_id] = stats;
             save_data(user_stats, STATS_FILE)
             if stats["patrol_wins"] >= 100:
                 hunter_role = discord.utils.get(ctx.guild.roles, name=EMO_HUNTER_ROLE_NAME)
@@ -1143,27 +1155,52 @@ async def ranklist(ctx):
     """Displays a list of all members in each rank."""
     if not game_features_enabled: return
 
+    await ctx.defer()  # Acknowledge the command while we gather data
+
     embed = discord.Embed(title="Server Rank Roster", color=discord.Color.from_rgb(200, 160, 100))
+
+    description_lines = []
 
     # Iterate through ranks from highest to lowest
     for rank_data in reversed(RANK_ROLES):
         role_name = rank_data["name"]
         role_obj = discord.utils.get(ctx.guild.roles, name=role_name)
 
-        if role_obj:
-            members_with_role = [member.mention for member in role_obj.members]
-            if members_with_role:
-                # To avoid hitting discord embed field limits, chunk the list
-                member_list_str = "\n".join(members_with_role)
-                if len(member_list_str) > 1024:
-                    member_list_str = member_list_str[:1020] + "..."
+        if role_obj and role_obj.members:
+            # Sort members by their display name alphabetically
+            members_with_role = sorted(role_obj.members, key=lambda m: m.display_name)
+            member_mentions = [member.mention for member in members_with_role]
 
-                embed.add_field(name=f"**{role_name}**", value=member_list_str, inline=False)
+            line = f"**{role_name}**: {', '.join(member_mentions)}"
+            description_lines.append(line)
 
-    if not embed.fields:
+    if not description_lines:
         embed.description = "No members currently hold any ranks."
+    else:
+        embed.description = "\n".join(description_lines)
 
     await ctx.send(embed=embed)
+
+
+@bot.command()
+@commands.is_owner()
+async def update(ctx):
+    """(Owner only) Pulls the latest code from GitHub and restarts the bot."""
+    await ctx.send("`Pulling latest code from GitHub...`")
+
+    try:
+        # Run 'git pull'
+        result = subprocess.run(["git", "pull"], capture_output=True, text=True, check=True)
+        await ctx.send(f"```\n{result.stdout}\n```")
+
+        # If pull is successful, restart the service
+        await ctx.send("`Restarting bot service...`")
+        subprocess.run(["sudo", "systemctl", "restart", "discord-bot.service"])
+
+    except subprocess.CalledProcessError as e:
+        await ctx.send(f"**An error occurred during `git pull`:**\n```\n{e.stderr}\n```")
+    except Exception as e:
+        await ctx.send(f"**An unexpected error occurred:**\n```\n{e}\n```")
 
 
 @bot.event

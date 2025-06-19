@@ -117,12 +117,12 @@
         "materials": {
             "Advanced Optics": 1,
             "Electronics": 11,
-            "Gunpowder": 66,
+            "Gunpowder": 68,
             "Medical Supplies": 34,
             "Military-Grade Composite": 19,
             "Scrap Metal": 7,
-            "High-Grade Steel": 17,
-            "Duct Tape": 53,
+            "High-Grade Steel": 18,
+            "Duct Tape": 56,
             "Nuclear Material": 1
         },
         "crafted_items": {
