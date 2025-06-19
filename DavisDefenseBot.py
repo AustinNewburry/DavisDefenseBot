@@ -449,7 +449,7 @@ class TrainView(discord.ui.View):
 
 
 class PvPView(discord.ui.View):
-    # This view will be implemented in the next step
+    # This will be filled in the full implementation
     pass
 
 
@@ -470,7 +470,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -536,8 +535,6 @@ async def health_bar_updater():
 @attack_scheduler.before_loop
 @health_bar_updater.before_loop
 async def before_tasks(): await bot.wait_until_ready()
-
-
 # --- Game Logic ---
 async def resolve_attack(channel: discord.TextChannel):
     global attack_in_progress, defenders
