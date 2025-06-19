@@ -395,7 +395,7 @@ class TrainView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return interaction.user.id == self.author.id
 
-    @discord.ui.button(label="Strength", style=discord.ButtonStyle.red, emoji="💪")
+    @discord.ui.button(label="Strength", style=discord.ButtonStyle.red, emoji="�")
     async def train_strength(self, interaction: discord.Interaction, button: discord.ui.Button):
         skills = get_user_skills(self.author.id)
         if skills["strength"] >= 100:
@@ -449,7 +449,7 @@ class TrainView(discord.ui.View):
 
 
 class PvPView(discord.ui.View):
-    # PvP View will be implemented in a later step
+    # This class will be implemented in the next step
     pass
 
 
@@ -470,7 +470,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -1206,6 +1205,85 @@ async def update(ctx):
         await ctx.send(f"**An unexpected error occurred:**\n```\n{e}\n```")
 
 
+# --- PVP Commands ---
+@bot.command()
+async def pvp(ctx, target: discord.Member, wager: int):
+    """Challenge another user to a duel for Honor."""
+    if not game_features_enabled: return
+    challenger = ctx.author
+
+    if challenger == target:
+        return await ctx.reply("You cannot challenge yourself.")
+    if wager < 0:
+        return await ctx.reply("You cannot wager a negative amount of Honor.")
+
+    challenger_honor = user_honor.get(str(challenger.id), 0)
+    target_honor = user_honor.get(str(target.id), 0)
+
+    if challenger_honor < wager:
+        return await ctx.reply(f"You do not have enough Honor to wager {wager}.")
+    if target_honor < wager:
+        return await ctx.reply(f"{target.mention} does not have enough Honor to accept this wager.")
+
+    # Store the invitation
+    pvp_invitations[target.id] = {
+        "challenger": challenger.id,
+        "wager": wager,
+        "time": datetime.datetime.now()
+    }
+    await ctx.send(
+        f"{target.mention}, you have been challenged to a duel by {challenger.mention} for **{wager} Honor**! Type `>pvpaccept` within 60 seconds to accept.")
+
+
+@bot.command()
+async def pvpaccept(ctx):
+    """Accept a pending duel invitation."""
+    if not game_features_enabled: return
+    challenger_id = pvp_invitations.get(ctx.author.id, {}).get("challenger")
+
+    if not challenger_id:
+        return await ctx.reply("You have no pending duel invitations.")
+
+    invitation = pvp_invitations[ctx.author.id]
+    if datetime.datetime.now() - invitation["time"] > datetime.timedelta(seconds=60):
+        del pvp_invitations[ctx.author.id]
+        return await ctx.reply("This duel invitation has expired.")
+
+    challenger = ctx.guild.get_member(challenger_id)
+    if not challenger:
+        return await ctx.reply("The challenger is no longer in this server.")
+
+    # Start the duel
+    wager = invitation['wager']
+    del pvp_invitations[ctx.author.id]
+
+    # Placeholder for starting the duel logic
+    await ctx.send(f"{ctx.author.mention} has accepted the duel! The fight for **{wager} Honor** begins!")
+
+
+@bot.command()
+async def killstreak(ctx):
+    """Displays the top 10 PvP killstreaks."""
+    if not game_features_enabled: return
+
+    sorted_streaks = sorted(user_stats.items(), key=lambda item: item[1].get('kill_streak', 0), reverse=True)
+
+    embed = discord.Embed(title="🔥 Killstreak Leaderboard 🔥", color=discord.Color.red())
+    description = ""
+
+    for i, (user_id, stats) in enumerate(sorted_streaks[:10]):
+        member = ctx.guild.get_member(int(user_id))
+        if member:
+            streak = stats.get('kill_streak', 0)
+            description += f"**{i + 1}.** {member.mention}: {streak} wins\n"
+
+    if not description:
+        description = "No one has a killstreak yet. Go fight!"
+
+    embed.description = description
+    await ctx.send(embed=embed)
+
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -1229,3 +1307,4 @@ async def on_command_error(ctx, error):
 
 
 bot.run(TOKEN)
+�
