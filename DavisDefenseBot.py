@@ -395,7 +395,7 @@ class TrainView(discord.ui.View):
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         return interaction.user.id == self.author.id
 
-    @discord.ui.button(label="Strength", style=discord.ButtonStyle.red, emoji="�")
+    @discord.ui.button(label="Strength", style=discord.ButtonStyle.red, emoji="💪")
     async def train_strength(self, interaction: discord.Interaction, button: discord.ui.Button):
         skills = get_user_skills(self.author.id)
         if skills["strength"] >= 100:
@@ -449,7 +449,7 @@ class TrainView(discord.ui.View):
 
 
 class PvPView(discord.ui.View):
-    # This class will be filled out in the full implementation.
+    # This class will be implemented in the next step
     pass
 
 
@@ -470,7 +470,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -536,6 +535,8 @@ async def health_bar_updater():
 @attack_scheduler.before_loop
 @health_bar_updater.before_loop
 async def before_tasks(): await bot.wait_until_ready()
+
+
 # --- Game Logic ---
 async def resolve_attack(channel: discord.TextChannel):
     global attack_in_progress, defenders
@@ -1127,7 +1128,7 @@ async def train(ctx):
     embed.add_field(name="❤️ Endurance", value="Reduces cooldowns for `>patrol` and `>scavenge`.", inline=False)
 
     view = TrainView(ctx.author)
-    await ctx.reply(embed=embed, view=view, ephemeral=True)
+    await ctx.reply(embed=embed, view=view)
 
 
 @bot.command()
@@ -1231,14 +1232,14 @@ async def killstreak(ctx):
         member = ctx.guild.get_member(int(user_id))
         if member:
             streak = stats.get('kill_streak', 0)
-            if streak > 0:
-                description += f"**{i + 1}.** {member.mention}: {streak} wins\n"
+            description += f"**{i + 1}.** {member.mention}: {streak} wins\n"
 
     if not description:
         description = "No one has a killstreak yet. Go fight!"
 
     embed.description = description
     await ctx.send(embed=embed)
+
 
 @bot.event
 async def on_command_error(ctx, error):
