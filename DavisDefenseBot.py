@@ -448,6 +448,11 @@ class TrainView(discord.ui.View):
         self.stop()
 
 
+class PvPView(discord.ui.View):
+    # PvP View will be implemented in a later step
+    pass
+
+
 # --- Bot Events & Tasks ---
 @bot.event
 async def on_ready():
@@ -1155,19 +1160,17 @@ async def ranklist(ctx):
     """Displays a list of all members in each rank."""
     if not game_features_enabled: return
 
-    await ctx.defer()  # Acknowledge the command while we gather data
+    await ctx.defer()
 
     embed = discord.Embed(title="Server Rank Roster", color=discord.Color.from_rgb(200, 160, 100))
 
     description_lines = []
 
-    # Iterate through ranks from highest to lowest
     for rank_data in reversed(RANK_ROLES):
         role_name = rank_data["name"]
         role_obj = discord.utils.get(ctx.guild.roles, name=role_name)
 
         if role_obj and role_obj.members:
-            # Sort members by their display name alphabetically
             members_with_role = sorted(role_obj.members, key=lambda m: m.display_name)
             member_mentions = [member.mention for member in members_with_role]
 
