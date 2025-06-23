@@ -25,6 +25,7 @@ ATTACK_CHANNEL_ID = 0
 NOTIFICATION_ROLE_NAME = "HDAAF Notifications"
 ANNOUNCEMENT_CHANNEL_NAME = "hdaaf-announcements"
 EMO_HUNTER_ROLE_NAME = "Emo Hunter"
+PRISONER_ROLE_NAME = "Prisoner of War"
 
 # --- Game Data Structures ---
 RANK_ROLES = [
@@ -470,6 +471,7 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -677,6 +679,7 @@ async def help_command(ctx):
             "**`>patrol`**: Go on patrol for a chance at Honor or an encounter (cooldown reduced by Endurance).\n"
             "**`>scavenge`**: Search for crafting materials (cooldown reduced by Endurance).\n"
             "**`>armory [@user]`**: Check your interactive inventory and crafting menu.\n"
+            "**`>use \"[item name]\"`**: Use a crafted item during a world boss fight.\n"
             "**`>defend`**: Join the defense during a server-wide attack.\n"
             "**`>hit`**: Attack the world boss during a boss event (2s cooldown).\n"
             "**`>ranklist`**: Shows a list of all members in each rank."
@@ -1128,7 +1131,7 @@ async def train(ctx):
     embed.add_field(name="❤️ Endurance", value="Reduces cooldowns for `>patrol` and `>scavenge`.", inline=False)
 
     view = TrainView(ctx.author)
-    await ctx.reply(embed=embed, view=view)
+    await ctx.reply(embed=embed, view=view, ephemeral=True)
 
 
 @bot.command()
@@ -1241,6 +1244,22 @@ async def killstreak(ctx):
     await ctx.send(embed=embed)
 
 
+# This check will be added to the top of all game commands
+@bot.check
+async def check_if_prisoner(ctx):
+    if ctx.author.id == OWNER_ID:
+        return True  # Owner bypasses all checks
+
+    prisoner_role = discord.utils.get(ctx.guild.roles, name=PRISONER_ROLE_NAME)
+    if prisoner_role and prisoner_role in ctx.author.roles:
+        # Define commands that prisoners CAN use
+        allowed_commands = ['help', 'ping']
+        if ctx.command.name not in allowed_commands:
+            await ctx.reply("PRISONERS ARE INELIGIBLE FOR MILITARY SERVICE.")
+            return False
+    return True
+
+
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandOnCooldown):
@@ -1253,6 +1272,9 @@ async def on_command_error(ctx, error):
         await ctx.reply(f"This command is on cooldown. Please try again in {error.retry_after:.2f}s.")
     elif isinstance(error, commands.NotOwner):
         await ctx.reply("You do not have permission to use this command.")
+    elif isinstance(error, commands.CheckFailure):
+        # This will catch the prisoner check failure, but we already sent a message.
+        pass
     elif isinstance(error, commands.ChannelNotFound):
         await ctx.reply(f"I could not find the channel you specified.")
     elif isinstance(error, commands.MissingRequiredArgument):
