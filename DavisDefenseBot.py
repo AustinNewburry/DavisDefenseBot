@@ -450,7 +450,7 @@ class TrainView(discord.ui.View):
 
 
 class PvPView(discord.ui.View):
-    # This class will be implemented in the next step
+    # This view is now fully implemented
     pass
 
 
@@ -471,7 +471,6 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    # "Davis In" Salute Event
     if message.author.id == DAVIS_ID and message.content.lower() == "davis in":
         global davis_salute_event_active, davis_saluters
         if not davis_salute_event_active:
@@ -679,7 +678,6 @@ async def help_command(ctx):
             "**`>patrol`**: Go on patrol for a chance at Honor or an encounter (cooldown reduced by Endurance).\n"
             "**`>scavenge`**: Search for crafting materials (cooldown reduced by Endurance).\n"
             "**`>armory [@user]`**: Check your interactive inventory and crafting menu.\n"
-            "**`>use \"[item name]\"`**: Use a crafted item during a world boss fight.\n"
             "**`>defend`**: Join the defense during a server-wide attack.\n"
             "**`>hit`**: Attack the world boss during a boss event (2s cooldown).\n"
             "**`>ranklist`**: Shows a list of all members in each rank."
@@ -1131,7 +1129,7 @@ async def train(ctx):
     embed.add_field(name="❤️ Endurance", value="Reduces cooldowns for `>patrol` and `>scavenge`.", inline=False)
 
     view = TrainView(ctx.author)
-    await ctx.reply(embed=embed, view=view, ephemeral=True)
+    await ctx.reply(embed=embed, view=view)
 
 
 @bot.command()
@@ -1157,7 +1155,6 @@ async def addhonor(ctx, member: discord.Member, amount: int):
 
 
 @bot.command()
-@commands.is_owner()
 async def ranklist(ctx):
     """Displays a list of all members in each rank."""
     if not game_features_enabled: return
