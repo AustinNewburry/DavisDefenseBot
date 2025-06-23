@@ -901,30 +901,6 @@ async def armory(ctx, member: discord.Member = None):
 
 
 @bot.command()
-async def use(ctx, *, item_name: str):
-    if not game_features_enabled: return
-    global boss_hp, boss_health_dirty
-    author_id = str(ctx.author.id)
-    if not boss_event_active:
-        return await ctx.reply("There is no event active to use an item in.")
-    normalized_item_name = item_name.strip().title()
-    user_crafted_items = user_armory.get(author_id, {}).get("crafted_items", {})
-    if user_crafted_items.get(normalized_item_name, 0) < 1:
-        return await ctx.reply(f"You don't have any `{normalized_item_name}` to use.")
-    if normalized_item_name == "Pipe Bomb":
-        user_armory[author_id]["crafted_items"][normalized_item_name] -= 1
-        save_data(user_armory, ARMORY_FILE)
-        damage = random.randint(250, 400)
-        boss_hp -= damage
-        boss_participants.add(ctx.author.id)
-        boss_health_dirty = True
-        await ctx.send(
-            f"💥 {ctx.author.mention} throws a **Pipe Bomb** at **{boss_title}**, dealing a massive **{damage}** damage!")
-    else:
-        await ctx.reply(f"You can't use `{normalized_item_name}` right now.")
-
-
-@bot.command()
 @commands.is_owner()
 async def worldboss(ctx, *, params: str):
     if not game_features_enabled: return
@@ -1207,15 +1183,54 @@ async def update(ctx):
 @bot.command()
 async def pvp(ctx, target: discord.Member, wager: int):
     """Challenge another user to a duel for Honor."""
-    # Placeholder for PvP logic
-    await ctx.send(f"PvP command is not fully implemented yet.")
+    if not game_features_enabled: return
+    challenger = ctx.author
+
+    if challenger == target:
+        return await ctx.reply("You cannot challenge yourself.")
+    if wager < 0:
+        return await ctx.reply("You cannot wager a negative amount of Honor.")
+
+    challenger_honor = user_honor.get(str(challenger.id), 0)
+    target_honor = user_honor.get(str(target.id), 0)
+
+    if challenger_honor < wager:
+        return await ctx.reply(f"You do not have enough Honor to wager {wager}.")
+    if target_honor < wager:
+        return await ctx.reply(f"{target.mention} does not have enough Honor to accept this wager.")
+
+    pvp_invitations[target.id] = {
+        "challenger": challenger.id,
+        "wager": wager,
+        "time": datetime.datetime.now()
+    }
+    await ctx.send(
+        f"{target.mention}, you have been challenged to a duel by {challenger.mention} for **{wager} Honor**! Type `>pvpaccept` within 60 seconds to accept.")
 
 
 @bot.command()
 async def pvpaccept(ctx):
     """Accept a pending duel invitation."""
-    # Placeholder for PvP logic
-    await ctx.send(f"PvP command is not fully implemented yet.")
+    if not game_features_enabled: return
+    challenger_id = pvp_invitations.get(ctx.author.id, {}).get("challenger")
+
+    if not challenger_id:
+        return await ctx.reply("You have no pending duel invitations.")
+
+    invitation = pvp_invitations[ctx.author.id]
+    if datetime.datetime.now() - invitation["time"] > datetime.timedelta(seconds=60):
+        del pvp_invitations[ctx.author.id]
+        return await ctx.reply("This duel invitation has expired.")
+
+    challenger = ctx.guild.get_member(challenger_id)
+    if not challenger:
+        return await ctx.reply("The challenger is no longer in this server.")
+
+    wager = invitation['wager']
+    del pvp_invitations[ctx.author.id]
+
+    # Placeholder for starting the duel logic
+    await ctx.send(f"{ctx.author.mention} has accepted the duel! The fight for **{wager} Honor** begins!")
 
 
 @bot.command()
